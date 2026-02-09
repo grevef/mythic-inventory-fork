@@ -1,5 +1,21 @@
 _itemsSource["tools"] = {
 	{
+        name = "laptop",
+        label = "Laptop",
+        price = 600,
+        isUsable = true,
+        isRemoved = false,
+        isStackable = false,
+        isDestroyed = false,
+        type = 7,
+        rarity = 2,
+        closeUi = true,
+        metalic = true,
+        state = "LAPTOP",
+        weight = 4,
+        durability = (60 * 60 * 24 * 30),
+    },
+	{
 		name = "lockpick",
 		label = "Lockpick",
 		price = 200,
