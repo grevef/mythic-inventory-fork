@@ -606,30 +606,3 @@ function RegisterCommands()
 	}, 0)
 end
 
-exports('GetItemsDatabase', function()
-	local items = {}
-	for name, item in pairs(itemsDatabase) do
-		table.insert(items, {
-			name = item.name,
-			label = item.label or item.name,
-			type = item.type or 0,
-			rarity = item.rarity or 0,
-			weight = item.weight or 0,
-			price = item.price or 0,
-			isStackable = item.isStackable,
-			description = item.description or '',
-		})
-	end
-	return items
-end)
-
-exports('DoesItemExist', function(itemName)
-	return itemsDatabase[itemName] ~= nil
-end)
-
-exports('GetItemType', function(itemName)
-	if itemsDatabase[itemName] then
-		return itemsDatabase[itemName].type
-	end
-	return nil
-end)

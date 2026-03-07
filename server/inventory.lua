@@ -2420,6 +2420,31 @@ INVENTORY = {
 	IsOpen = function(self, invType, id)
 		return _openInvs[string.format("%s-%s", invType, id)]
 	end,
+	GetItemsDatabase = function(self)
+		local items = {}
+		for name, item in pairs(itemsDatabase) do
+			table.insert(items, {
+				name = item.name,
+				label = item.label or item.name,
+				type = item.type or 0,
+				rarity = item.rarity or 0,
+				weight = item.weight or 0,
+				price = item.price or 0,
+				isStackable = item.isStackable,
+				description = item.description or '',
+			})
+		end
+		return items
+	end,
+	DoesItemExist = function(self, itemName)
+		return itemsDatabase[itemName] ~= nil
+	end,
+	GetItemType = function(self, itemName)
+		if itemsDatabase[itemName] then
+			return itemsDatabase[itemName].type
+		end
+		return nil
+	end,
 }
 
 function UpdateCharacterItemStates(source, inventory, adding)
