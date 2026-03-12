@@ -398,6 +398,7 @@ function RegisterCommands()
 		end
 		local char = player:GetData("Character")
 		MySQL.query.await("DELETE FROM inventory WHERE name = ?", { string.format("%s-%s", char:GetData("SID"), 1) })
+		TriggerClientEvent("Weapons:Client:ForceUnequip", char:GetData("Source"))
 		Execute:Client(
 			char:GetData("Source"),
 			"Notification",
