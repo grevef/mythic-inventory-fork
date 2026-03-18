@@ -9,7 +9,9 @@ export interface AppSettings {
 
 export interface ChangeAlert {
   type: 'add' | 'removed' | 'used' | 'Holstered' | 'Equipped';
-  item: InventoryItem;
+  item: string;
+  count?: number;
+  id?: number;
   timestamp: number;
 }
 
