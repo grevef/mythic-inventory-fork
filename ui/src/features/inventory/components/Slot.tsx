@@ -3,6 +3,7 @@ import { Box, LinearProgress, Typography } from '@mui/material';
 import { shallowEqual } from 'react-redux';
 import { useAppDispatch, useAppSelector } from '../../../shared/hooks';
 import { inventoryActions } from '../inventorySlice';
+import { appActions } from '../../../store/appSlice';
 import { getItemImage } from '../../../shared/utils/inventory';
 import { lua2json } from '../../../shared/utils/lua';
 import { formatThousands } from '../../../shared/utils/formatters';
@@ -148,21 +149,11 @@ const SlotComponent = ({ slot, item, invType, owner, disabled = false }: SlotPro
 
           // Optimistic update
           if (isPlayerInventory) {
-            dispatch(
-              inventoryActions.mergeItemPlayerToSecondary({
-                originSlot: slot,
-                destSlot,
-                origin: item,
-              })
-            );
+            dispatch(inventoryActions.mergeItemPlayerToSecondary({ originSlot: slot, destSlot, origin: item }));
+            dispatch(appActions.addAlert({ type: 'removed', item: item.Name, count: item.Count }));
           } else {
-            dispatch(
-              inventoryActions.mergeItemSecondaryToPlayer({
-                originSlot: slot,
-                destSlot,
-                origin: item,
-              })
-            );
+            dispatch(inventoryActions.mergeItemSecondaryToPlayer({ originSlot: slot, destSlot, origin: item }));
+            dispatch(appActions.addAlert({ type: 'add', item: item.Name, count: item.Count }));
           }
         } else {
           nuiActions.moveSlot({
@@ -180,21 +171,11 @@ const SlotComponent = ({ slot, item, invType, owner, disabled = false }: SlotPro
 
           // Optimistic update
           if (isPlayerInventory) {
-            dispatch(
-              inventoryActions.moveItemPlayerToSecondary({
-                originSlot: slot,
-                destSlot,
-                origin: item,
-              })
-            );
+            dispatch(inventoryActions.moveItemPlayerToSecondary({ originSlot: slot, destSlot, origin: item }));
+            dispatch(appActions.addAlert({ type: 'removed', item: item.Name, count: item.Count }));
           } else {
-            dispatch(
-              inventoryActions.moveItemSecondaryToPlayer({
-                originSlot: slot,
-                destSlot,
-                origin: item,
-              })
-            );
+            dispatch(inventoryActions.moveItemSecondaryToPlayer({ originSlot: slot, destSlot, origin: item }));
+            dispatch(appActions.addAlert({ type: 'add', item: item.Name, count: item.Count }));
           }
         }
       } else {
@@ -278,29 +259,13 @@ const SlotComponent = ({ slot, item, invType, owner, disabled = false }: SlotPro
 
       // Update local state optimistically
       if (isOriginPlayer && isDestPlayer) {
-        dispatch(
-          inventoryActions.mergeItemPlayerSame({
-            originSlot: hoverOrigin.Slot,
-            destSlot: slot,
-            origin: hover,
-          })
-        );
+        dispatch(inventoryActions.mergeItemPlayerSame({ originSlot: hoverOrigin.Slot, destSlot: slot, origin: hover }));
       } else if (isOriginPlayer && !isDestPlayer) {
-        dispatch(
-          inventoryActions.mergeItemPlayerToSecondary({
-            originSlot: hoverOrigin.Slot,
-            destSlot: slot,
-            origin: hover,
-          })
-        );
+        dispatch(inventoryActions.mergeItemPlayerToSecondary({ originSlot: hoverOrigin.Slot, destSlot: slot, origin: hover }));
+        dispatch(appActions.addAlert({ type: 'removed', item: hover.Name, count: hover.Count }));
       } else if (!isOriginPlayer && isDestPlayer) {
-        dispatch(
-          inventoryActions.mergeItemSecondaryToPlayer({
-            originSlot: hoverOrigin.Slot,
-            destSlot: slot,
-            origin: hover,
-          })
-        );
+        dispatch(inventoryActions.mergeItemSecondaryToPlayer({ originSlot: hoverOrigin.Slot, destSlot: slot, origin: hover }));
+        dispatch(appActions.addAlert({ type: 'add', item: hover.Name, count: hover.Count }));
       }
     } else if (item) {
       // SWAP operation (destination has item)
@@ -318,29 +283,15 @@ const SlotComponent = ({ slot, item, invType, owner, disabled = false }: SlotPro
 
       // Update local state optimistically
       if (isOriginPlayer && isDestPlayer) {
-        dispatch(
-          inventoryActions.swapItemPlayerSame({
-            originSlot: hoverOrigin.Slot,
-            destSlot: slot,
-            origin: hover,
-          })
-        );
+        dispatch(inventoryActions.swapItemPlayerSame({ originSlot: hoverOrigin.Slot, destSlot: slot, origin: hover }));
       } else if (isOriginPlayer && !isDestPlayer) {
-        dispatch(
-          inventoryActions.swapItemPlayerToSecondary({
-            originSlot: hoverOrigin.Slot,
-            destSlot: slot,
-            origin: hover,
-          })
-        );
+        dispatch(inventoryActions.swapItemPlayerToSecondary({ originSlot: hoverOrigin.Slot, destSlot: slot, origin: hover }));
+        dispatch(appActions.addAlert({ type: 'removed', item: hover.Name, count: hover.Count }));
+        dispatch(appActions.addAlert({ type: 'add', item: item.Name, count: item.Count }));
       } else if (!isOriginPlayer && isDestPlayer) {
-        dispatch(
-          inventoryActions.swapItemSecondaryToPlayer({
-            originSlot: hoverOrigin.Slot,
-            destSlot: slot,
-            origin: hover,
-          })
-        );
+        dispatch(inventoryActions.swapItemSecondaryToPlayer({ originSlot: hoverOrigin.Slot, destSlot: slot, origin: hover }));
+        dispatch(appActions.addAlert({ type: 'add', item: hover.Name, count: hover.Count }));
+        dispatch(appActions.addAlert({ type: 'removed', item: item.Name, count: item.Count }));
       }
     } else {
       // MOVE operation (destination is empty)
@@ -359,29 +310,13 @@ const SlotComponent = ({ slot, item, invType, owner, disabled = false }: SlotPro
 
       // Update local state optimistically
       if (isOriginPlayer && isDestPlayer) {
-        dispatch(
-          inventoryActions.moveItemPlayerSame({
-            originSlot: hoverOrigin.Slot,
-            destSlot: slot,
-            origin: hover,
-          })
-        );
+        dispatch(inventoryActions.moveItemPlayerSame({ originSlot: hoverOrigin.Slot, destSlot: slot, origin: hover }));
       } else if (isOriginPlayer && !isDestPlayer) {
-        dispatch(
-          inventoryActions.moveItemPlayerToSecondary({
-            originSlot: hoverOrigin.Slot,
-            destSlot: slot,
-            origin: hover,
-          })
-        );
+        dispatch(inventoryActions.moveItemPlayerToSecondary({ originSlot: hoverOrigin.Slot, destSlot: slot, origin: hover }));
+        dispatch(appActions.addAlert({ type: 'removed', item: hover.Name, count: hover.Count }));
       } else if (!isOriginPlayer && isDestPlayer) {
-        dispatch(
-          inventoryActions.moveItemSecondaryToPlayer({
-            originSlot: hoverOrigin.Slot,
-            destSlot: slot,
-            origin: hover,
-          })
-        );
+        dispatch(inventoryActions.moveItemSecondaryToPlayer({ originSlot: hoverOrigin.Slot, destSlot: slot, origin: hover }));
+        dispatch(appActions.addAlert({ type: 'add', item: hover.Name, count: hover.Count }));
       }
     }
 

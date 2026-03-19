@@ -11,6 +11,7 @@ import { Hotbar } from './features/hotbar/components/Hotbar';
 import { Crafting, Process } from './features/crafting/components';
 import { DevModeButton } from './features/inventory/components/DevModeButton';
 import { DevModePopup } from './features/inventory/components/DevModePopup';
+import { ItemNotifications } from './features/inventory/components/ItemNotifications';
 import { nuiActions } from './services/nui';
 import type { NUIMessage } from './shared/types';
 
@@ -66,7 +67,7 @@ function App() {
           dispatch(inventoryActions.setInUse((message.data as any).state));
           break;
         case 'ADD_ALERT':
-          dispatch(appActions.addAlert(message.data as any));
+          dispatch(appActions.addAlert((message.data as any).alert));
           break;
         case 'OPEN_STATIC_TOOLTIP':
           dispatch(inventoryActions.setStaticTooltip((message.data as any).item));
@@ -184,6 +185,7 @@ function App() {
         {Boolean(crafting) && <Process crafting={crafting} />}
         <DevModeButton onClick={() => setDevPopupOpen(true)} />
         <DevModePopup open={devPopupOpen} onClose={() => setDevPopupOpen(false)} />
+        <ItemNotifications />
       </Box>
     </ThemeProvider>
   );
