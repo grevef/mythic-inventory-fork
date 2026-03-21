@@ -1,4 +1,4 @@
-import { useEffect, useRef, memo, useCallback } from 'react';
+import { useEffect, useRef, useState, memo, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Box, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../../shared/hooks';
@@ -8,6 +8,7 @@ import type { ChangeAlert } from '../../../shared/types';
 import { theme } from '../../../styles/theme';
 
 const NOTIFICATION_DURATION = 4000;
+const EXIT_DURATION = 220;
 
 const { success, error, warning, info, primary } = theme.palette;
 
@@ -27,12 +28,14 @@ interface NotificationItemProps {
 const NotificationItem = memo(({ alert, onRemove }: NotificationItemProps) => {
   const items = useAppSelector((state) => state.inventory.items);
   const itemDef = items[alert.item];
+  const [exiting, setExiting] = useState(false);
   const onRemoveRef = useRef(onRemove);
   onRemoveRef.current = onRemove;
 
   useEffect(() => {
-    const timer = setTimeout(() => onRemoveRef.current(), NOTIFICATION_DURATION);
-    return () => clearTimeout(timer);
+    const timer = setTimeout(() => setExiting(true), NOTIFICATION_DURATION - EXIT_DURATION);
+    const removeTimer = setTimeout(() => onRemoveRef.current(), NOTIFICATION_DURATION);
+    return () => { clearTimeout(timer); clearTimeout(removeTimer); };
   }, [alert.timestamp]);
 
   const config = ACTION_CONFIG[alert.type] ?? ACTION_CONFIG.used;
@@ -54,10 +57,16 @@ const NotificationItem = memo(({ alert, onRemove }: NotificationItemProps) => {
         borderRadius: '6px',
         minWidth: '210px',
         maxWidth: '270px',
-        animation: 'notifSlideIn 0.22s ease-out',
+        animation: exiting
+          ? `notifSlideOut ${EXIT_DURATION}ms ease-in forwards`
+          : 'notifSlideIn 0.22s ease-out',
         '@keyframes notifSlideIn': {
           from: { opacity: 0, transform: 'translateX(30px)' },
           to: { opacity: 1, transform: 'translateX(0)' },
+        },
+        '@keyframes notifSlideOut': {
+          from: { opacity: 1, transform: 'translateX(0)' },
+          to: { opacity: 0, transform: 'translateX(30px)' },
         },
       }}
     >
